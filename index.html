@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mental Performance — 7 Week Program</title>
+<style>
+  :root{
+    --ink:#0e1620;
+    --ink-2:#16202c;
+    --line:#2a3744;
+    --paper:#eef1ee;
+    --paper-dim:#a8b3ac;
+    --amber:#d98e3f;
+    --amber-dim:#7a5a32;
+    --green:#5c8a6e;
+    --font-display: "Oswald", "Arial Narrow", sans-serif;
+    --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", "Courier New", monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:var(--font-body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+
+  a{color:inherit;}
+
+  .skip{
+    position:absolute; left:-999px; top:auto;
+  }
+  a.skip:focus{
+    left:1rem; top:1rem; background:var(--amber); color:var(--ink); padding:.5rem 1rem; z-index:100;
+  }
+
+  /* ---------- Header ---------- */
+  header.hero{
+    padding: 3.5rem 1.25rem 2.5rem;
+    border-bottom: 1px solid var(--line);
+    background:
+      linear-gradient(180deg, rgba(217,142,63,0.08), transparent 60%),
+      var(--ink);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-inner{
+    max-width: 720px;
+    margin: 0 auto;
+    position:relative;
+    z-index:1;
+  }
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: .72rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--amber);
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+    margin-bottom: 1rem;
+  }
+  .eyebrow::before{
+    content:"";
+    width: 22px; height:1px;
+    background: var(--amber);
+    display:inline-block;
+  }
+  h1{
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: clamp(2rem, 7vw, 3.1rem);
+    letter-spacing: .01em;
+    line-height: 1.02;
+    margin: 0 0 .9rem;
+  }
+  .hero p.sub{
+    color: var(--paper-dim);
+    max-width: 50ch;
+    font-size: 1rem;
+    margin: 0 0 1.6rem;
+  }
+  .progress-rail{
+    display:flex;
+    gap:6px;
+    margin-top: 1.6rem;
+  }
+  .progress-rail span{
+    flex:1;
+    height: 4px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow:hidden;
+    position:relative;
+  }
+  .progress-rail span.done{ background: var(--amber); }
+  .progress-rail span.current{
+    background: linear-gradient(90deg, var(--amber), var(--line) 50%);
+  }
+  .progress-label{
+    font-family: var(--font-mono);
+    font-size: .72rem;
+    color: var(--paper-dim);
+    margin-top:.6rem;
+    letter-spacing:.04em;
+  }
+
+  /* ---------- Main / cards ---------- */
+  main{
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 5rem;
+  }
+
+  .week{
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    background: var(--ink-2);
+    overflow:hidden;
+    transition: border-color .2s ease;
+  }
+  .week.unlocked{
+    border-color: rgba(217,142,63,0.45);
+  }
+
+  .week-row{
+    display:flex;
+    align-items:center;
+    gap: 1rem;
+    padding: 1.1rem 1.25rem;
+    cursor: default;
+  }
+  .week.locked .week-row{ cursor: default; }
+
+  .week-num{
+    font-family: var(--font-display);
+    font-size: 1.9rem;
+    font-weight: 600;
+    width: 2.4ch;
+    flex-shrink:0;
+    color: var(--paper-dim);
+    line-height:1;
+  }
+  .week.unlocked .week-num{ color: var(--amber); }
+
+  .week-meta{ flex:1; min-width:0; }
+  .week-title{
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: 1.05rem;
+    letter-spacing:.01em;
+    margin: 0 0 .25rem;
+    color: var(--paper);
+  }
+  .week.locked .week-title{ color: var(--paper-dim); }
+
+  .week-status{
+    font-family: var(--font-mono);
+    font-size: .72rem;
+    letter-spacing:.04em;
+    text-transform: uppercase;
+  }
+  .week.locked .week-status{ color: var(--paper-dim); }
+  .week.unlocked .week-status{ color: var(--green); }
+
+  .lock-icon{
+    flex-shrink:0;
+    width: 18px; height:18px;
+    opacity:.55;
+  }
+
+  /* locked body texture */
+  .week.locked{
+    background-image: repeating-linear-gradient(
+      135deg,
+      rgba(255,255,255,0.015) 0px,
+      rgba(255,255,255,0.015) 1px,
+      transparent 1px,
+      transparent 10px
+    );
+  }
+
+  .week-body{
+    padding: 0 1.25rem 1.25rem;
+  }
+  .video-wrap{
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    background: #000;
+    border-radius: 3px;
+    overflow:hidden;
+    margin-bottom: 1rem;
+  }
+  .video-wrap iframe{
+    position:absolute; top:0; left:0; width:100%; height:100%; border:0;
+  }
+
+  .worksheet-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:.6rem;
+    width:100%;
+    padding: .95rem 1rem;
+    background: var(--amber);
+    color: var(--ink);
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    font-size: .92rem;
+    font-weight:600;
+    text-decoration:none;
+    border-radius: 3px;
+    transition: background .15s ease, transform .1s ease;
+  }
+  .worksheet-btn:hover{ background:#e6a05a; }
+  .worksheet-btn:active{ transform: scale(.98); }
+  .worksheet-btn:focus-visible{
+    outline: 2px solid var(--paper);
+    outline-offset: 2px;
+  }
+
+  footer{
+    text-align:center;
+    padding: 2rem 1.25rem 3rem;
+    color: var(--paper-dim);
+    font-family: var(--font-mono);
+    font-size: .7rem;
+    letter-spacing:.03em;
+  }
+
+  /* debug banner */
+  #debugBanner{
+    position: sticky;
+    top:0;
+    z-index: 50;
+    background: var(--amber);
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: .72rem;
+    text-align:center;
+    padding: .4rem .6rem;
+    letter-spacing:.03em;
+    display:none;
+  }
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip">Skip to content</a>
+<div id="debugBanner"></div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Mental Performance Program</div>
+    <h1>Seven Weeks On&nbsp;The&nbsp;Mound, Between&nbsp;The&nbsp;Ears</h1>
+    <p class="sub">One lesson a week. Watch the video, work the sheet, let it settle before the next one unlocks. The pace is the point.</p>
+    <div class="progress-rail" id="progressRail" aria-hidden="true"></div>
+    <p class="progress-label" id="progressLabel"></p>
+  </div>
+</header>
+
+<main id="main">
+  <div id="weekList"></div>
+</main>
+
+<footer>
+  Mental Performance Program — for the athlete it was sent to.
+</footer>
+
+<script>
+(function(){
+
+  // ---------------------------------------------------------------------
+  // 1. COURSE DATA — replace placeholders with real titles / links / PDFs.
+  //    Worksheet files should live alongside this page (e.g. /worksheets/week-1.pdf)
+  // ---------------------------------------------------------------------
+  const WEEKS = [
+    {
+      title: "Building Your Pre-Pitch Routine",
+      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      worksheetUrl: "worksheets/week-1.pdf"
+    },
+    {
+      title: "Controlling The Controllables",
+      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      worksheetUrl: "worksheets/week-2.pdf"
+    },
+    {
+      title: "Resetting After A Bad Pitch",
+      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      worksheetUrl: "worksheets/week-3.pdf"
+    },
+    {
+      title: "Breathing & Arousal Control",
+      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      worksheetUrl: "worksheets/week-4.pdf"
+    },
+    {
+      title: "Self-Talk On The Mound",
+      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      worksheetUrl: "worksheets/week-5.pdf"
+    },
+    {
+      title: "Visualization Before First Pitch",
+      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      worksheetUrl: "worksheets/week-6.pdf"
+    },
+    {
+      title: "Carrying It Into Game Day",
+      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      worksheetUrl: "worksheets/week-7.pdf"
+    }
+  ];
+
+  const STORAGE_KEY = "mp_course_start_date";
+  const MS_PER_DAY = 1000 * 60 * 60 * 24;
+  const DAYS_PER_WEEK = 7;
+
+  // ---------------------------------------------------------------------
+  // 2. URL params: ?reset=1 clears stored start date.
+  //    ?start=YYYY-MM-DD sets an explicit start date (useful for per-client links).
+  //    ?debug=N fakes "current week" as N (1-7) to preview every state.
+  // ---------------------------------------------------------------------
+  const params = new URLSearchParams(window.location.search);
+
+  if (params.has("reset")) {
+    localStorage.removeItem(STORAGE_KEY);
+  }
+
+  if (params.has("start")) {
+    const d = new Date(params.get("start") + "T00:00:00");
+    if (!isNaN(d)) {
+      localStorage.setItem(STORAGE_KEY, d.toISOString());
+    }
+  }
+
+  let startDate = localStorage.getItem(STORAGE_KEY);
+  if (!startDate) {
+    startDate = new Date().toISOString();
+    localStorage.setItem(STORAGE_KEY, startDate);
+  }
+  startDate = new Date(startDate);
+
+  function daysElapsed() {
+    const now = new Date();
+    const diff = now.setHours(0,0,0,0) - new Date(startDate).setHours(0,0,0,0);
+    return Math.floor(diff / MS_PER_DAY);
+  }
+
+  // current unlocked week number (1-indexed), capped at WEEKS.length
+  let currentWeek = Math.min(
+    WEEKS.length,
+    Math.floor(daysElapsed() / DAYS_PER_WEEK) + 1
+  );
+
+  // debug override
+  const debugBanner = document.getElementById("debugBanner");
+  if (params.has("debug")) {
+    const fake = parseInt(params.get("debug"), 10);
+    if (!isNaN(fake) && fake >= 1 && fake <= WEEKS.length) {
+      currentWeek = fake;
+      debugBanner.style.display = "block";
+      debugBanner.textContent = "DEBUG MODE — viewing as week " + fake + " of " + WEEKS.length + " (?debug=N to change, remove param for real dates)";
+    }
+  }
+
+  function unlockDateForWeek(weekNum) {
+    const d = new Date(startDate);
+    d.setDate(d.getDate() + (weekNum - 1) * DAYS_PER_WEEK);
+    return d;
+  }
+
+  function daysUntil(weekNum) {
+    const unlock = unlockDateForWeek(weekNum);
+    const now = new Date();
+    const diff = unlock.setHours(0,0,0,0) - now.setHours(0,0,0,0);
+    return Math.ceil(diff / MS_PER_DAY);
+  }
+
+  // ---------------------------------------------------------------------
+  // 3. Render
+  // ---------------------------------------------------------------------
+  const listEl = document.getElementById("weekList");
+  const railEl = document.getElementById("progressRail");
+  const labelEl = document.getElementById("progressLabel");
+
+  WEEKS.forEach((week, i) => {
+    const weekNum = i + 1;
+    const isUnlocked = weekNum <= currentWeek;
+
+    const card = document.createElement("section");
+    card.className = "week " + (isUnlocked ? "unlocked" : "locked");
+    card.setAttribute("aria-label", "Week " + weekNum + ": " + week.title);
+
+    const statusText = isUnlocked
+      ? (weekNum === currentWeek ? "Unlocked — this week" : "Unlocked")
+      : (() => {
+          const d = daysUntil(weekNum);
+          return "Unlocks in " + d + " day" + (d === 1 ? "" : "s");
+        })();
+
+    const lockSvg = isUnlocked
+      ? `<svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 6 1-4.5 4.5L17.5 20 12 17l-5.5 3 1-6.5L3 9l6-1 3-6z" stroke="none" fill="none"/><path d="M5 13l4 4L19 7" stroke="currentColor"/></svg>`
+      : `<svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`;
+
+    let bodyHtml = "";
+    if (isUnlocked) {
+      bodyHtml = `
+        <div class="week-body">
+          <div class="video-wrap">
+            <iframe src="${week.videoUrl}" title="${week.title}" loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen></iframe>
+          </div>
+          <a class="worksheet-btn" href="${week.worksheetUrl}" download>
+            Download worksheet
+          </a>
+        </div>`;
+    }
+
+    card.innerHTML = `
+      <div class="week-row">
+        <div class="week-num">${String(weekNum).padStart(2,"0")}</div>
+        <div class="week-meta">
+          <p class="week-title">${week.title}</p>
+          <p class="week-status">${statusText}</p>
+        </div>
+        ${lockSvg}
+      </div>
+      ${bodyHtml}
+    `;
+
+    listEl.appendChild(card);
+
+    // progress rail dot
+    const dot = document.createElement("span");
+    if (weekNum < currentWeek) dot.className = "done";
+    else if (weekNum === currentWeek) dot.className = "current";
+    railEl.appendChild(dot);
+  });
+
+  labelEl.textContent = "Week " + currentWeek + " of " + WEEKS.length + " unlocked";
+
+})();
+</script>
+
+</body>
+</html>
