@@ -6,14 +6,14 @@
 <title>Mental Performance — 7 Week Program</title>
 <style>
   :root{
-    --ink:#0e1620;
-    --ink-2:#16202c;
-    --line:#2a3744;
-    --paper:#eef1ee;
-    --paper-dim:#a8b3ac;
+    --ink:#0b0b0a;
+    --ink-2:#1a1916;
+    --line:#332f27;
+    --paper:#f2ecd8;
+    --paper-dim:#9b9586;
     --amber:#d98e3f;
     --amber-dim:#7a5a32;
-    --green:#5c8a6e;
+    --green:#7a9e7c;
     --font-display: "Oswald", "Arial Narrow", sans-serif;
     --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     --font-mono: "JetBrains Mono", "Courier New", monospace;
@@ -41,6 +41,50 @@
   }
   a.skip:focus{
     left:1rem; top:1rem; background:var(--amber); color:var(--ink); padding:.5rem 1rem; z-index:100;
+  }
+
+  /* ---------- Splash ---------- */
+  #splash{
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    background: var(--ink);
+    transition: opacity .15s linear;
+  }
+  #splash.hidden{
+    pointer-events:none;
+  }
+  #splash img{
+    width: min(72vw, 360px);
+    height:auto;
+    display:block;
+  }
+  .scroll-cue{
+    margin-top: 2.2rem;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:.4rem;
+    color: var(--paper-dim);
+    font-family: var(--font-mono);
+    font-size: .68rem;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+  }
+  .scroll-cue svg{
+    width: 20px; height:20px;
+    animation: bob 1.8s ease-in-out infinite;
+  }
+  @keyframes bob{
+    0%, 100% { transform: translateY(0); opacity:.5; }
+    50% { transform: translateY(8px); opacity:1; }
+  }
+  #spacer{
+    height: 100vh;
   }
 
   /* ---------- Header ---------- */
@@ -94,7 +138,7 @@
   .progress-rail{
     display:flex;
     gap:6px;
-    margin-top: 1.6rem;
+    margin: 1.5rem 0 0;
   }
   .progress-rail span{
     flex:1;
@@ -112,7 +156,7 @@
     font-family: var(--font-mono);
     font-size: .72rem;
     color: var(--paper-dim);
-    margin-top:.6rem;
+    margin: .6rem 0 1.6rem;
     letter-spacing:.04em;
   }
 
@@ -263,17 +307,18 @@
 <a href="#main" class="skip">Skip to content</a>
 <div id="debugBanner"></div>
 
-<header class="hero">
-  <div class="hero-inner">
-    <div class="eyebrow">Mind Body Hitting Mental Predormence System</div>
-    <h1>The Mental Side Of Every Swing</h1>
-    <p class="sub">One lesson a week. Watch the video, work the sheet, let it settle before the next one unlocks. The pace is the point.</p>
-    <div class="progress-rail" id="progressRail" aria-hidden="true"></div>
-    <p class="progress-label" id="progressLabel"></p>
+<div id="splash">
+  <img src="assets/mbh-logo.png" alt="Mind Body Hitting">
+  <div class="scroll-cue" aria-hidden="true">
+    Scroll
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
   </div>
-</header>
+</div>
+<div id="spacer"></div>
 
 <main id="main">
+  <div class="progress-rail" id="progressRail" aria-hidden="true"></div>
+  <p class="progress-label" id="progressLabel"></p>
   <div id="weekList"></div>
 </main>
 
@@ -455,6 +500,28 @@
 
   labelEl.textContent = "Week " + currentWeek + " of " + WEEKS.length + " unlocked";
 
+})();
+
+// ---------------------------------------------------------------------
+// Splash screen: fades out as the user scrolls past the first viewport.
+// Purely visual — does not touch unlock/gating logic above.
+// ---------------------------------------------------------------------
+(function(){
+  const splash = document.getElementById("splash");
+  if (!splash) return;
+
+  const FADE_DISTANCE = Math.max(window.innerHeight * 0.7, 300);
+
+  function update(){
+    const y = window.scrollY || window.pageYOffset;
+    const opacity = Math.max(0, 1 - y / FADE_DISTANCE);
+    splash.style.opacity = opacity;
+    splash.classList.toggle("hidden", opacity <= 0.02);
+  }
+
+  update();
+  window.addEventListener("scroll", update, { passive: true });
+  window.addEventListener("resize", update);
 })();
 </script>
 
